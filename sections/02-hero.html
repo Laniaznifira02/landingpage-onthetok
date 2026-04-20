@@ -1,0 +1,358 @@
+<!-- ============================================
+     SECTION 2: HERO — Clean Layout + 3D Scroll Tilt
+     OnTheTok · Operating System for TikTok Affiliate
+     Headline + CTA center → Dashboard image (FULL, no crop)
+     ============================================ -->
+
+<style>
+    /* ══════════════════════════════════════════
+       HERO SECTION WRAPPER
+       ══════════════════════════════════════════ */
+    #hero {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 140px 32px 100px;
+        font-family: 'Inter', sans-serif;
+        overflow: visible;
+        background: transparent;
+        /* 3D perspective lives on the section so the image tilt reads true */
+        perspective: 1400px;
+        perspective-origin: 50% 30%;
+    }
+
+    .hero-inner {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 56px;
+    }
+
+    /* ══════════════════════════════════════════
+       HEADLINE BLOCK (centered, top)
+       ══════════════════════════════════════════ */
+    .hero-headline-block {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        text-align: center;
+        align-items: center;
+        max-width: 960px;
+    }
+
+    .hero-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 1.6px;
+        text-transform: uppercase;
+        color: var(--glass-text, #f0f2f8);
+        padding: 8px 16px;
+    }
+    .hero-label svg {
+        width: 14px;
+        height: 14px;
+        stroke-width: 2;
+    }
+
+    .hero-title {
+        font-size: clamp(40px, 6.4vw, 72px);
+        font-weight: 700;
+        line-height: 1.05;
+        letter-spacing: -0.025em;
+        color: var(--glass-text, #f0f2f8);
+        margin: 0;
+    }
+    .hero-title .accent {
+        background: linear-gradient(135deg, #fe2858 0%, #ff5f86 50%, #2af0ea 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-style: italic;
+        font-weight: 700;
+    }
+
+    .hero-subtitle {
+        font-size: clamp(16px, 1.6vw, 19px);
+        font-weight: 400;
+        line-height: 1.6;
+        color: var(--glass-muted, #7a8296);
+        max-width: 720px;
+        margin: 0;
+    }
+
+    /* ── CTA row ── */
+    .hero-cta-row {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+    .hero-cta-row .glass-btn {
+        padding: 16px 30px;
+        font-size: 15px;
+    }
+    .hero-cta-row .glass-btn svg {
+        width: 16px;
+        height: 16px;
+        stroke-width: 2;
+    }
+
+    /* ── Meta line ── */
+    .hero-meta {
+        font-size: 13px;
+        color: var(--glass-muted, #7a8296);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 4px;
+    }
+    .hero-meta .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: #2af0ea;
+        box-shadow: 0 0 12px #2af0ea;
+        animation: heroPulseDot 1.8s ease-in-out infinite;
+    }
+    @keyframes heroPulseDot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50%      { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    /* ── Stats row (simple, inline) ── */
+    .hero-stats-row {
+        display: flex;
+        gap: 40px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 4px;
+    }
+    .hero-stat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+    }
+    .hero-stat-value {
+        font-size: clamp(22px, 2.4vw, 28px);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: var(--glass-text, #f0f2f8);
+    }
+    .hero-stat-value .accent {
+        background: linear-gradient(135deg, #fe2858, #2af0ea);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .hero-stat-label {
+        font-size: 12px;
+        color: var(--glass-muted, #7a8296);
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        font-weight: 500;
+    }
+
+    /* ══════════════════════════════════════════
+       DASHBOARD IMAGE FRAME (glass + 3D scroll tilt)
+       Full image, not cropped — width dominant.
+       ══════════════════════════════════════════ */
+    .hero-image-wrap {
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 14px;
+        border-radius: 24px;
+        overflow: hidden;            /* glass rim tucks behind image edge */
+        transform-origin: 50% 30%;    /* tilt anchored near the top */
+        transform-style: preserve-3d;
+        will-change: transform;
+        transition: transform 0.12s linear;
+    }
+
+    .hero-image-wrap img {
+        display: block;
+        width: 100%;
+        height: auto;                /* full image, no crop */
+        border-radius: 16px;
+        /* NO object-fit, NO aspect-ratio — original ratio wins */
+        box-shadow:
+            0 30px 80px rgba(0, 0, 0, 0.55),
+            inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE
+       ══════════════════════════════════════════ */
+    @media (max-width: 768px) {
+        #hero {
+            padding: 110px 16px 72px;
+            perspective: 1000px;
+        }
+        .hero-inner {
+            gap: 40px;
+        }
+        .hero-title {
+            font-size: clamp(32px, 9vw, 48px);
+        }
+        .hero-cta-row {
+            flex-direction: column;
+            width: 100%;
+        }
+        .hero-cta-row .glass-btn {
+            width: 100%;
+            justify-content: center;
+        }
+        .hero-stats-row {
+            gap: 28px;
+        }
+        .hero-image-wrap {
+            padding: 8px;
+            border-radius: 18px;
+        }
+        .hero-image-wrap img {
+            border-radius: 12px;
+        }
+    }
+
+    /* Reduced motion — respect user preference */
+    @media (prefers-reduced-motion: reduce) {
+        .hero-image-wrap {
+            transform: none !important;
+            transition: none;
+        }
+    }
+</style>
+
+<section id="hero">
+    <div class="hero-inner">
+        <!-- ═══ HEADLINE BLOCK ═══ -->
+        <div class="hero-headline-block">
+            <div class="hero-label glass-pill pink">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+                Fokus Ke Strategi
+            </div>
+
+            <h1 class="hero-title">
+                Berhenti Ngedata Kreator<br>
+                &amp; Tagih
+                <span class="glass-glitch accent" data-text="Konten Manual">Konten Manual</span>
+            </h1>
+
+            <p class="hero-subtitle">
+                OS pertama yang mengintegrasi campaign, broadcast, sample tracking, dan content review —
+                semua dalam satu workspace transparan tanpa spreadsheet berlipat.
+            </p>
+
+            <div class="hero-cta-row">
+                <button class="glass-btn jelly ripple-container" onclick="window.location.href='#pricing'">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                    Coba Gratis
+                </button>
+                <button class="glass-btn ghost jelly ripple-container"
+                    onclick="window.open('https://www.youtube.com/watch?v=07oQY9n7aac','_blank')">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    Lihat Demo
+                </button>
+            </div>
+
+            <div class="hero-meta">
+                <span class="dot"></span>
+                Dipakai 100+ brand &middot; Free 14 hari &middot; No credit card
+            </div>
+
+            <!-- ═══ STATS ROW ═══ -->
+            <div class="hero-stats-row">
+                <div class="hero-stat">
+                    <div class="hero-stat-value"><span class="accent">2.867</span> jam</div>
+                    <div class="hero-stat-label">hemat per bulan</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value"><span class="accent">97%</span></div>
+                    <div class="hero-stat-label">biaya turun</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value"><span class="accent">100x</span></div>
+                    <div class="hero-stat-label">eksekusi</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ DASHBOARD IMAGE (full, not cropped, 3D scroll tilt) ═══ -->
+        <div class="hero-image-wrap glass-card" id="heroImageWrap" data-glass-tilt>
+            <img src="https://flxr2.com/ott/Galeri%20Onthetok/Report%20menu%20dark.png"
+                alt="OnTheTok Dashboard Preview" loading="lazy">
+        </div>
+    </div>
+</section>
+
+<script>
+    (function () {
+        // ═══ 3D SCROLL TILT ═══
+        // progress = 1 - (rect.top / vh)
+        //   → 0 when frame top sits at bottom of viewport (just entering)
+        //   → 0.5 when frame top is at vertical center
+        //   → 1 when frame top reaches top of viewport (going above)
+        // rotateX: (1 - progress) * 10  → tilts forward on entry, flat at center, lifts as it leaves
+        // rotateY: (progress - 0.5) * -4 → subtle lateral sway
+        // scale:   0.94 + progress * 0.06  → 0.94 → 1.00
+        const wrap = document.getElementById('heroImageWrap');
+        if (!wrap) return;
+
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReduced) return;
+
+        let ticking = false;
+        const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+        function update() {
+            const rect = wrap.getBoundingClientRect();
+            const vh = window.innerHeight || 800;
+
+            // Raw progress: 1 - (top / vh)
+            const progressRaw = 1 - (rect.top / vh);
+            const progress = clamp(progressRaw, 0, 1.2); // allow slight overscroll past 1
+
+            const rotateX = clamp((1 - progress) * 10, 0, 10);        // 10deg → 0deg
+            const rotateY = clamp((progress - 0.5) * -4, -4, 4);       // ±4deg sway
+            const scale   = clamp(0.94 + progress * 0.06, 0.94, 1.0);  // 0.94 → 1.00
+
+            wrap.style.transform =
+                `rotateX(${rotateX.toFixed(2)}deg) ` +
+                `rotateY(${rotateY.toFixed(2)}deg) ` +
+                `scale(${scale.toFixed(4)})`;
+
+            ticking = false;
+        }
+
+        function onScroll() {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(update);
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
+        // Initial paint (covers refresh-mid-page)
+        update();
+    })();
+</script>
