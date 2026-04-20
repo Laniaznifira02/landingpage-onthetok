@@ -1,0 +1,945 @@
+<!-- ============================================
+     SECTION 10: PRICING
+     OnTheTok Landing Page
+     ============================================ -->
+
+<style>
+  .pricing-section {
+    padding: 100px 0;
+    background: var(--bg-dark);
+  }
+
+  .pricing-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  /* Duration Toggle — Liquid Glass segmented */
+  .pricing-duration-toggle {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin: 0 auto 50px;
+    padding: 6px;
+    flex-wrap: wrap;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    backdrop-filter: blur(18px) saturate(180%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      inset 0 -0.5px 0 rgba(255, 255, 255, 0.05),
+      0 4px 14px rgba(4, 4, 4, 0.35);
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .duration-btn {
+    position: relative;
+    padding: 10px 22px;
+    background: transparent;
+    border: none;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #c8ccd8;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-family: inherit;
+  }
+
+  .duration-btn:hover:not(.active) {
+    color: #f0f2f8;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .duration-btn.active {
+    background: linear-gradient(
+      135deg,
+      rgba(254, 40, 88, 0.95),
+      rgba(42, 240, 234, 0.95)
+    );
+    color: #040404;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      inset 0 -0.5px 0 rgba(4, 4, 4, 0.2),
+      0 4px 16px rgba(254, 40, 88, 0.35),
+      0 0 20px rgba(42, 240, 234, 0.25);
+  }
+
+  .duration-btn .discount-badge {
+    position: absolute;
+    top: -10px;
+    right: -8px;
+    padding: 3px 8px;
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #000;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    align-items: start;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 968px) {
+    .pricing-grid {
+      grid-template-columns: 1fr;
+      max-width: 420px;
+    }
+    .pricing-duration-toggle {
+      gap: 6px;
+    }
+    .duration-btn {
+      padding: 10px 16px;
+      font-size: 13px;
+    }
+  }
+
+  .pricing-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-2xl);
+    padding: 36px;
+    position: relative;
+    transition:
+      transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 0.4s ease,
+      background 0.3s ease;
+  }
+
+  .pricing-card:not(.featured):hover {
+    transform: translateY(-6px) scale(1.015);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      inset 0 -0.5px 0 rgba(255, 255, 255, 0.05),
+      0 8px 24px rgba(4, 4, 4, 0.45),
+      0 22px 48px rgba(4, 4, 4, 0.5),
+      0 0 0 1px rgba(42, 240, 234, 0.4),
+      0 0 32px rgba(42, 240, 234, 0.25) !important;
+  }
+
+  /* Reveal / scroll stagger */
+  .pricing-card.reveal {
+    opacity: 0;
+    transform: translateY(40px) rotateX(8deg);
+    transform-origin: center top;
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .pricing-card.reveal.active {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+  }
+  .pricing-card.featured.reveal.active {
+    transform: scale(1.03);
+  }
+  @media (max-width: 968px) {
+    .pricing-card.featured.reveal.active {
+      transform: none;
+    }
+  }
+
+  .pricing-card.featured {
+    /* Liquid Glass surface */
+    background: var(--lg-glass-md);
+    -webkit-backdrop-filter: var(--lg-blur-md);
+    backdrop-filter: var(--lg-blur-md);
+    border: 1px solid transparent;
+    border-radius: var(--lg-radius-xl, var(--radius-2xl));
+    /* Rim light (top highlight) + pink/cyan dual halo */
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+      var(--lg-shadow-float),
+      var(--lg-glow-dual);
+    transform: scale(1.03);
+    overflow: hidden;
+    isolation: isolate;
+    transition:
+      transform 0.45s var(--lg-ease-jelly, cubic-bezier(0.34, 1.56, 0.64, 1)),
+      box-shadow 0.45s ease;
+  }
+
+  /* Gradient border trick via pseudo-element (pink -> cyan) */
+  .pricing-card.featured::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(
+      135deg,
+      rgba(254, 40, 88, 0.95) 0%,
+      rgba(222, 140, 157, 0.85) 50%,
+      rgba(42, 240, 234, 0.95) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Subtle animated light sweep */
+  .pricing-card.featured::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(
+      115deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.06) 45%,
+      rgba(255, 255, 255, 0.12) 50%,
+      rgba(255, 255, 255, 0.06) 55%,
+      transparent 100%
+    );
+    transform: skewX(-18deg);
+    animation: lgFeaturedSweep 7s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .pricing-card.featured > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  .pricing-card.featured:hover {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+      var(--lg-shadow-halo, var(--lg-shadow-float)),
+      0 0 60px rgba(254, 40, 88, 0.4),
+      0 0 80px rgba(42, 240, 234, 0.3),
+      var(--lg-glow-dual);
+    transform: scale(1.045) translateY(-4px);
+  }
+
+  @keyframes lgFeaturedSweep {
+    0% {
+      left: -60%;
+    }
+    60%,
+    100% {
+      left: 140%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pricing-card.featured::after {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 968px) {
+    .pricing-card.featured {
+      transform: none;
+    }
+    .pricing-card.featured:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  .pricing-badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 7px 22px;
+    background: linear-gradient(
+      135deg,
+      rgba(254, 40, 88, 0.95) 0%,
+      rgba(42, 240, 234, 0.95) 100%
+    );
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #040404;
+    white-space: nowrap;
+    z-index: 3;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      0 4px 14px rgba(254, 40, 88, 0.5),
+      0 0 22px rgba(42, 240, 234, 0.4);
+  }
+
+  .pricing-tier {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .pricing-tier h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #f0f2f8;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  .pricing-tier p {
+    font-size: 14px;
+    color: #c8ccd8;
+    margin: 0;
+  }
+
+  .pricing-price {
+    text-align: center;
+    padding: 24px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    margin-bottom: 24px;
+  }
+
+  .pricing-original {
+    font-size: 14px;
+    color: rgba(200, 204, 216, 0.55);
+    text-decoration: line-through;
+    margin-bottom: 4px;
+    min-height: 20px;
+  }
+
+  .pricing-amount {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 30px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fe2858 0%, #de8c9d 50%, #2af0ea 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+
+  .pricing-period {
+    font-size: 14px;
+    color: #c8ccd8;
+    margin-left: 4px;
+  }
+
+  .pricing-savings {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: rgba(245, 158, 11, 0.1);
+    border-radius: var(--radius-md);
+    font-size: 12px;
+    color: #fbbf24;
+    min-height: 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pricing-savings .save-amount {
+    font-weight: 700;
+  }
+  .pricing-savings .per-month {
+    font-size: 11px;
+    color: var(--text-gray-400);
+    margin-top: 2px;
+  }
+
+  .pricing-features {
+    list-style: none;
+    margin: 0 0 28px 0;
+    padding: 0;
+  }
+  .pricing-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    font-size: 14px;
+    color: #c8ccd8;
+  }
+  .pricing-features li svg {
+    width: 18px;
+    height: 18px;
+    color: #fe2858;
+    margin-top: 1px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 6px rgba(254, 40, 88, 0.5));
+  }
+  .pricing-card.featured .pricing-features li svg {
+    color: #2af0ea;
+    filter: drop-shadow(0 0 6px rgba(42, 240, 234, 0.55));
+  }
+
+  .pricing-cta {
+    display: block;
+    width: 100%;
+    padding: 14px 24px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 14px;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pricing-cta-primary {
+    background: linear-gradient(
+      135deg,
+      rgba(254, 40, 88, 0.95) 0%,
+      rgba(42, 240, 234, 0.95) 100%
+    );
+    color: #040404;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      inset 0 -1px 0 rgba(4, 4, 4, 0.15),
+      0 6px 18px rgba(254, 40, 88, 0.4);
+  }
+  .pricing-cta-primary:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.65),
+      0 10px 28px rgba(254, 40, 88, 0.5),
+      0 0 28px rgba(42, 240, 234, 0.4);
+  }
+  .pricing-cta-secondary {
+    background: rgba(255, 255, 255, 0.06);
+    color: #f0f2f8;
+    border: 1px solid rgba(254, 40, 88, 0.35);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    backdrop-filter: blur(14px) saturate(160%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 4px 12px rgba(4, 4, 4, 0.35);
+  }
+  .pricing-cta-secondary:hover {
+    transform: translateY(-2px);
+    border-color: rgba(42, 240, 234, 0.7);
+    background: rgba(42, 240, 234, 0.10);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      0 8px 22px rgba(42, 240, 234, 0.3);
+  }
+
+  .pricing-savings {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.22);
+    border-radius: 12px;
+    font-size: 12px;
+    color: #fcd34d;
+    min-height: 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pricing-addons {
+    text-align: center;
+    margin-top: 60px;
+    padding: 32px;
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    backdrop-filter: blur(18px) saturate(180%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 12px 32px rgba(4, 4, 4, 0.35);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .pricing-addons h4 {
+    font-size: 17px;
+    font-weight: 600;
+    color: #f0f2f8;
+    margin-bottom: 20px;
+  }
+  .addons-list {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .addon-item {
+    padding: 12px 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    font-size: 14px;
+    color: #c8ccd8;
+    transition: all 0.3s ease;
+  }
+  .addon-item:hover {
+    background: rgba(254, 40, 88, 0.08);
+    border-color: rgba(254, 40, 88, 0.35);
+    transform: translateY(-1px);
+  }
+  .addon-item span {
+    background: linear-gradient(135deg, #fe2858, #2af0ea);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-weight: 700;
+  }
+</style>
+
+<section class="pricing-section" id="harga">
+  <div class="container">
+    <div class="pricing-header">
+      <div class="section-label glass-pill pink">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+          <line x1="2" y1="10" x2="22" y2="10"></line>
+        </svg>
+        Pilih Paket
+      </div>
+      <h2 class="section-title">
+        Investasi untuk <span class="text-gradient">Pertumbuhan</span>
+      </h2>
+    </div>
+
+    <!-- Duration Toggle -->
+    <div class="pricing-duration-toggle">
+      <button class="duration-btn active jelly ripple-container" data-months="1">1 Bulan</button>
+      <button class="duration-btn jelly ripple-container" data-months="3">
+        3 Bulan
+        <span class="discount-badge">-15%</span>
+      </button>
+      <button class="duration-btn jelly ripple-container" data-months="6">
+        6 Bulan
+        <span class="discount-badge">-25%</span>
+      </button>
+      <button class="duration-btn jelly ripple-container" data-months="12">
+        12 Bulan
+        <span class="discount-badge">-33%</span>
+      </button>
+    </div>
+
+    <div class="pricing-grid">
+      <!-- Starter -->
+      <div class="pricing-card reveal glass-card jelly ripple-container" data-plan="starter" data-base="589000">
+        <div class="pricing-tier">
+          <h3>STARTER</h3>
+          <p>Pemula & Solo Creator</p>
+        </div>
+        <div class="pricing-price">
+          <div class="pricing-original"></div>
+          <div class="pricing-amount">Rp 589.000</div>
+          <div class="pricing-period">/bulan</div>
+          <div class="pricing-savings">
+            <span class="save-amount">Fleksibel, tanpa komitmen</span>
+          </div>
+        </div>
+        <ul class="pricing-features">
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            10.000 Broadcast Pesan
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            350 Tracking Order
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            2.500 Tracking Konten
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            AI Message Generator
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Chrome Extension
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Auto-Reminder System
+          </li>
+        </ul>
+        <a
+          href="https://app.onthetok.id/login"
+          class="pricing-cta pricing-cta-secondary glass-btn ghost jelly ripple-container"
+          >Mulai Sekarang</a
+        >
+      </div>
+
+      <!-- Growth -->
+      <div
+        class="pricing-card featured reveal jelly ripple-container"
+        data-plan="growth"
+        data-base="1415000"
+      >
+        <div class="pricing-badge">POPULER</div>
+        <div class="pricing-tier">
+          <h3>GROWTH</h3>
+          <p>Tim Kecil & KOL Serius</p>
+        </div>
+        <div class="pricing-price">
+          <div class="pricing-original"></div>
+          <div class="pricing-amount">Rp 1.415.000</div>
+          <div class="pricing-period">/bulan</div>
+          <div class="pricing-savings">
+            <span class="save-amount">Fleksibel, tanpa komitmen</span>
+          </div>
+        </div>
+        <ul class="pricing-features">
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            30.000 Broadcast Pesan
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            750 Tracking Order
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            5.000 Tracking Konten
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Priority Support
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Semua fitur Starter +
+          </li>
+        </ul>
+        <a
+          href="https://app.onthetok.id/login"
+          class="pricing-cta pricing-cta-primary glass-btn lg-jelly jelly ripple-container"
+          >Mulai Sekarang</a
+        >
+      </div>
+
+      <!-- Scale -->
+      <div class="pricing-card reveal glass-card jelly ripple-container" data-plan="scale" data-base="4129000">
+        <div class="pricing-tier">
+          <h3>SCALE</h3>
+          <p>Agensi & Power User</p>
+        </div>
+        <div class="pricing-price">
+          <div class="pricing-original"></div>
+          <div class="pricing-amount">Rp 4.129.000</div>
+          <div class="pricing-period">/bulan</div>
+          <div class="pricing-savings">
+            <span class="save-amount">Fleksibel, tanpa komitmen</span>
+          </div>
+        </div>
+        <ul class="pricing-features">
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            100.000 Broadcast Pesan
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            2.500 Tracking Order
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            15.000 Tracking Konten
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Telegram Bot Report
+          </li>
+          <li>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Dedicated Account Manager
+          </li>
+        </ul>
+        <a
+          href="https://app.onthetok.id/login"
+          class="pricing-cta pricing-cta-secondary glass-btn ghost jelly ripple-container"
+          >Konsultasi Strategis</a
+        >
+      </div>
+    </div>
+
+    <div class="pricing-addons reveal">
+      <h4>Butuh lebih? Beli Add-on:</h4>
+      <div class="addons-list">
+        <div class="addon-item">+10K Broadcast: <span>Rp 150K</span></div>
+        <div class="addon-item">+100 Order Tracking: <span>Rp 100K</span></div>
+        <div class="addon-item">+1K Content Tracking: <span>Rp 75K</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    const discounts = { 1: 0, 3: 0.15, 6: 0.25, 12: 0.33 };
+    const durationBtns = document.querySelectorAll(".duration-btn");
+    const pricingCards = document.querySelectorAll(".pricing-card");
+
+    function formatRupiah(num) {
+      return "Rp " + num.toLocaleString("id-ID");
+    }
+
+    function updatePrices(months) {
+      const discount = discounts[months];
+
+      pricingCards.forEach((card) => {
+        const basePrice = parseInt(card.dataset.base);
+        const totalNormal = basePrice * months;
+        const totalDiscounted = Math.round(totalNormal * (1 - discount));
+        const perMonth = Math.round(totalDiscounted / months);
+        const savings = totalNormal - totalDiscounted;
+
+        const originalEl = card.querySelector(".pricing-original");
+        const amountEl = card.querySelector(".pricing-amount");
+        const periodEl = card.querySelector(".pricing-period");
+        const savingsEl = card.querySelector(".pricing-savings");
+
+        if (months === 1) {
+          originalEl.textContent = "";
+          amountEl.textContent = formatRupiah(basePrice);
+          periodEl.textContent = "/bulan";
+          savingsEl.innerHTML =
+            '<span class="save-amount">Fleksibel, tanpa komitmen</span>';
+        } else {
+          originalEl.textContent = formatRupiah(totalNormal);
+          amountEl.textContent = formatRupiah(totalDiscounted);
+          periodEl.textContent = "/" + months + " bulan";
+          savingsEl.innerHTML = `
+                    <span class="save-amount">Hemat ${formatRupiah(savings)}</span>
+                    <span class="per-month">${formatRupiah(perMonth)}/bulan</span>
+                `;
+        }
+      });
+    }
+
+    durationBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        durationBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        updatePrices(parseInt(btn.dataset.months));
+      });
+    });
+
+    // Initialize
+    updatePrices(1);
+  })();
+
+  (function () {
+    const pricingCards = Array.from(
+      document.querySelectorAll(".pricing-section .pricing-card.reveal"),
+    );
+    pricingCards.forEach((el, i) => {
+      el.style.transitionDelay = i * 80 + "ms";
+    });
+
+    const pricingObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+            pricingObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 },
+    );
+    document
+      .querySelectorAll(".pricing-section .reveal")
+      .forEach((el) => pricingObserver.observe(el));
+
+    // Animated count-up for price numbers on reveal
+    const amounts = document.querySelectorAll(".pricing-section .pricing-amount");
+    const parseNum = (txt) => {
+      const m = txt.replace(/[^\d]/g, "");
+      return m ? parseInt(m, 10) : 0;
+    };
+    const formatRp = (n) => "Rp " + n.toLocaleString("id-ID");
+
+    const animateCount = (el, target) => {
+      const start = performance.now();
+      const duration = 900;
+      const from = 0;
+      const tick = (now) => {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        const val = Math.round(from + (target - from) * eased);
+        el.textContent = formatRp(val);
+        if (t < 1) requestAnimationFrame(tick);
+        else el.textContent = formatRp(target);
+      };
+      requestAnimationFrame(tick);
+    };
+
+    const countObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            if (el.dataset.counted === "1") return;
+            el.dataset.counted = "1";
+            const target = parseNum(el.textContent);
+            if (target > 0) animateCount(el, target);
+            countObserver.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.4 },
+    );
+    amounts.forEach((el) => countObserver.observe(el));
+  })();
+</script>

@@ -1,0 +1,573 @@
+<!-- ============================================
+     SECTION 1: HEADER / NAVIGATION
+     OnTheTok Landing Page — Floating Glass Pill (TikTok)
+     Initial: full-width transparent, almost invisible
+     Scroll > 50px: morphs into compact floating pill (centered, pink/cyan glow)
+     ============================================ -->
+
+<style>
+  /* ─── Wrapper ───────────────────────────────────────────
+     Note: `.header` position/z-index/pointer-events are
+     force-set in glass-overrides.css. We only handle layout
+     transitions & the pill morph here.
+     ─────────────────────────────────────────────────────── */
+  .header {
+    padding: 0 20px;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    transition: padding 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .header-container {
+    width: 100%;
+    flex-shrink: 1;
+  }
+
+  /* INITIAL STATE — full-width, fully transparent (shader handles refraction)
+     `.glass-pill` class triggers shader pickup; we force bg:transparent so the
+     shader is the sole visual layer (no double-tint) */
+  /* Layout fixed from the start (SAME dimensions scroll / no-scroll).
+     No layout-property transitions → no reflow during scroll. Only
+     composited properties (border-radius, box-shadow, transform, opacity)
+     animate — those stay on the GPU and don't cause scroll lag. */
+  .header-container {
+    max-width: 1100px;
+    margin: 8px auto 0;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none;
+    border: none;
+    transform: translateZ(0);
+    transition:
+      box-shadow 0.35s ease,
+      transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* SCROLLED STATE — floating glass pill (shader renders refraction)
+     Keep bg fully transparent; rim light + halo shadow provide the edges */
+  /* Scrolled — rim + halo fade in. No layout change (dimensions identical
+     to initial), only box-shadow + subtle scale transform (GPU-composited). */
+  .header.scrolled .header-container {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transform: translateZ(0) scale(0.98);
+    box-shadow:
+      inset 0 1.5px 0 rgba(255, 255, 255, 0.28),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+      0 18px 44px rgba(0, 0, 0, 0.45),
+      0 0 32px rgba(254, 40, 88, 0.08);
+  }
+
+  .header-inner {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+  }
+  .header-inner > .logo        { justify-self: start; }
+  .header-inner > .nav         { justify-self: center; }
+  .header-inner > .nav-actions { justify-self: end; }
+
+  /* ─── Zone LEFT: Logo ─────────────────────── */
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    flex-shrink: 0;
+    padding: 6px 8px;
+    border-radius: 999px;
+  }
+
+  .logo img {
+    height: 36px;
+    width: auto;
+    display: block;
+    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .header.scrolled .logo img {
+    height: 30px;
+  }
+
+  .logo-text {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: #f0f2f8;
+    letter-spacing: -0.02em;
+    transition: opacity 0.4s ease;
+  }
+
+  /* ─── Zone CENTER: Nav links ─────────────────────── */
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex: 1 1 auto;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .nav-link {
+    position: relative;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #a8aec2;
+    border-radius: 999px;
+    white-space: nowrap;
+    text-decoration: none;
+    transition:
+      color 0.25s ease,
+      background 0.25s ease,
+      transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .nav-link:hover {
+    color: #f0f2f8;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  /* Active link — pink dot indicator under the label */
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 2px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #fe2858;
+    transform: translate(-50%, 6px) scale(0);
+    opacity: 0;
+    transition:
+      transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+      opacity 0.25s ease;
+    box-shadow: 0 0 8px rgba(254, 40, 88, 0.6);
+  }
+
+  .nav-link.active {
+    color: #fe2858;
+    background: rgba(254, 40, 88, 0.08);
+  }
+
+  .nav-link.active::after {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 1;
+  }
+
+  /* ─── Zone RIGHT: Login + CTA ─────────────────────── */
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .nav-login {
+    padding: 9px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #f0f2f8;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    white-space: nowrap;
+    text-decoration: none;
+    transition:
+      background 0.3s ease,
+      border-color 0.3s ease,
+      color 0.25s ease;
+  }
+
+  .nav-login:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+  }
+
+  /* Header CTA — compact glass-btn override (reduced padding for pill fit) */
+  .header .glass-btn {
+    padding: 10px 22px;
+    font-size: 13px;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  /* ─── Mobile Menu Button ─────────────────────── */
+  .mobile-menu-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 50%;
+    cursor: pointer;
+    transition:
+      background 0.3s ease,
+      border-color 0.3s ease;
+    color: #f0f2f8;
+  }
+
+  .mobile-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+
+  .mobile-menu-btn svg {
+    width: 20px;
+    height: 20px;
+    color: #f0f2f8;
+  }
+
+  /* ─── Mobile Nav Dropdown (slide-down glass pill) ─────────────────────── */
+  .mobile-nav {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 16px;
+    right: 16px;
+    padding: 10px;
+    border-radius: 24px;
+    background: rgba(10, 10, 12, 0.72);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    box-shadow:
+      inset 0 1.5px 0 rgba(255, 255, 255, 0.3),
+      0 20px 50px rgba(0, 0, 0, 0.55),
+      0 0 40px rgba(254, 40, 88, 0.1);
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .mobile-nav.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .mobile-nav-link {
+    display: block;
+    padding: 14px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #a8aec2;
+    border-radius: 14px;
+    text-decoration: none;
+    transition: color 0.25s ease, background 0.25s ease;
+  }
+
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active {
+    color: #fe2858;
+    background: rgba(254, 40, 88, 0.1);
+  }
+
+  .mobile-nav-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 8px 12px;
+  }
+
+  .mobile-nav-login {
+    display: block;
+    margin: 6px 8px;
+    padding: 13px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    color: #f0f2f8;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    text-decoration: none;
+  }
+
+  .mobile-nav-cta {
+    display: block;
+    margin: 6px 8px 8px;
+    padding: 14px 22px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    color: #ffffff;
+    background: linear-gradient(180deg, #fe2858, #c81d44);
+    border-radius: 14px;
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      0 6px 20px rgba(254, 40, 88, 0.4);
+  }
+
+  /* ─── Tighten on mid-desktop (969–1100px) ─────────────────────── */
+  @media (max-width: 1100px) and (min-width: 969px) {
+    .nav-link {
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+    .nav-login {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+    .header .glass-btn {
+      padding: 9px 16px;
+      font-size: 12px;
+    }
+    .logo-text {
+      font-size: 16px;
+    }
+  }
+
+  /* ─── Mobile breakpoint <968px ─────────────────────── */
+  @media (max-width: 968px) {
+    .header {
+      padding: 0 12px;
+    }
+    .header-container {
+      padding: 14px 16px;
+    }
+    /* Mobile fallback: shader may be disabled/laggy, provide a light CSS glass
+       backup only on scrolled state (rest stays fully transparent) */
+    .header.scrolled .header-container {
+      padding: 8px 10px 8px 14px;
+      background: rgba(12, 12, 16, 0.42) !important;
+      backdrop-filter: blur(16px) saturate(160%) !important;
+      -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+    }
+    .nav,
+    .nav-actions {
+      display: none;
+    }
+    .mobile-menu-btn {
+      display: flex;
+    }
+    .logo img {
+      height: 32px;
+    }
+    .header.scrolled .logo img {
+      height: 28px;
+    }
+    .logo-text {
+      font-size: 16px;
+    }
+  }
+</style>
+
+<header class="header" id="header">
+  <div class="header-container glass-pill">
+    <div class="header-inner">
+      <!-- Zone LEFT: Logo -->
+      <a href="#" class="logo jelly ripple-container">
+        <img src="https://flxr2.com/ott/logo.png" alt="OnTheTok" />
+        <span class="logo-text">OnTheTok</span>
+      </a>
+
+      <!-- Zone CENTER: Nav -->
+      <nav class="nav">
+        <a href="#masalah" class="nav-link jelly ripple-container">Masalah</a>
+        <a href="#solusi" class="nav-link jelly ripple-container">Solusi</a>
+        <a href="#cara-kerja" class="nav-link jelly ripple-container">Cara Kerja</a>
+        <a href="#fitur" class="nav-link jelly ripple-container">Fitur</a>
+        <a href="#harga" class="nav-link jelly ripple-container">Harga</a>
+        <a href="#faq" class="nav-link jelly ripple-container">FAQ</a>
+      </nav>
+
+      <!-- Zone RIGHT: Login + CTA -->
+      <div class="nav-actions">
+        <a
+          href="https://app.onthetok.id/login"
+          class="nav-login jelly ripple-container"
+        >
+          Login
+        </a>
+        <a
+          href="https://wa.me/6287777220117?text=Halo,%20saya%20ingin%20konsultasi%20tentang%20OnTheTok"
+          class="glass-btn jelly ripple-container"
+        >
+          Konsultasi
+        </a>
+      </div>
+
+      <!-- Mobile Menu Toggle -->
+      <button
+        class="mobile-menu-btn jelly ripple-container"
+        id="mobileMenuBtn"
+        aria-label="Toggle menu"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Nav Dropdown -->
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="#masalah" class="mobile-nav-link jelly ripple-container">Masalah</a>
+    <a href="#solusi" class="mobile-nav-link jelly ripple-container">Solusi</a>
+    <a href="#cara-kerja" class="mobile-nav-link jelly ripple-container">Cara Kerja</a>
+    <a href="#fitur" class="mobile-nav-link jelly ripple-container">Fitur</a>
+    <a href="#harga" class="mobile-nav-link jelly ripple-container">Harga</a>
+    <a href="#faq" class="mobile-nav-link jelly ripple-container">FAQ</a>
+    <div class="mobile-nav-divider"></div>
+    <a
+      href="https://app.onthetok.id/login"
+      class="mobile-nav-login jelly ripple-container"
+    >
+      Login
+    </a>
+    <a
+      href="https://wa.me/6287777220117?text=Halo,%20saya%20ingin%20konsultasi%20tentang%20OnTheTok"
+      class="mobile-nav-cta jelly ripple-container"
+    >
+      Konsultasi Gratis
+    </a>
+  </nav>
+</header>
+
+<script>
+  // ─── Scroll morph: add .scrolled when scrollY > 50 ───
+  (function () {
+    const header = document.getElementById("header");
+    if (!header) return;
+
+    let ticking = false;
+    const THRESHOLD = 50;
+
+    const onScroll = () => {
+      if (window.scrollY > THRESHOLD) {
+        header.classList.add("scrolled");
+      } else {
+        header.classList.remove("scrolled");
+      }
+      ticking = false;
+    };
+
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(onScroll);
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+    onScroll();
+  })();
+
+  // ─── Mobile menu toggle (PRESERVE button ID) ───
+  (function () {
+    const btn = document.getElementById("mobileMenuBtn");
+    const nav = document.getElementById("mobileNav");
+    if (!btn || !nav) return;
+
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      nav.classList.toggle("active");
+    });
+
+    // Close menu on link tap
+    nav.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => nav.classList.remove("active"));
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!nav.contains(e.target) && !btn.contains(e.target)) {
+        nav.classList.remove("active");
+      }
+    });
+  })();
+
+  // ─── Smooth scroll for internal anchors ───
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener("click", function (e) {
+      const href = this.getAttribute("href");
+      if (!href || href === "#") return;
+      const target = document.querySelector(href);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  });
+
+  // ─── Scroll-spy active link (IntersectionObserver) ───
+  (function () {
+    const navLinks = Array.from(
+      document.querySelectorAll(".nav-link, .mobile-nav-link")
+    );
+    const idToLinks = new Map();
+
+    navLinks.forEach((link) => {
+      const href = link.getAttribute("href");
+      if (!href || !href.startsWith("#") || href === "#") return;
+      const id = href.slice(1);
+      if (!idToLinks.has(id)) idToLinks.set(id, []);
+      idToLinks.get(id).push(link);
+    });
+
+    const sections = Array.from(idToLinks.keys())
+      .map((id) => document.getElementById(id))
+      .filter(Boolean);
+
+    if (!sections.length) return;
+
+    // Track visibility ratios; highlight the most-visible section
+    const visibility = new Map();
+
+    const setActive = (activeId) => {
+      navLinks.forEach((link) => {
+        const href = link.getAttribute("href") || "";
+        link.classList.toggle("active", href === "#" + activeId);
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          visibility.set(entry.target.id, entry.intersectionRatio);
+        });
+        let topId = null;
+        let topRatio = 0;
+        visibility.forEach((ratio, id) => {
+          if (ratio > topRatio) {
+            topRatio = ratio;
+            topId = id;
+          }
+        });
+        if (topId) setActive(topId);
+      },
+      {
+        rootMargin: "-80px 0px -55% 0px",
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+      }
+    );
+
+    sections.forEach((sec) => observer.observe(sec));
+  })();
+</script>
